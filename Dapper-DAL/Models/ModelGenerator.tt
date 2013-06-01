@@ -512,7 +512,7 @@ class SqlServerSchemaReader : SchemaReader
 			tbl.Columns=LoadColumns(tbl);
 		            
 			// Mark the primary key
-			string PrimaryKey=GetPK(tbl.Name);
+			string PrimaryKey=GetPK(tbl.Schema, tbl.Name);
 			var pkColumn=tbl.Columns.SingleOrDefault(x=>x.Name.ToLower().Trim()==PrimaryKey.ToLower().Trim());
 			if(pkColumn!=null)
 			{
@@ -565,14 +565,15 @@ class SqlServerSchemaReader : SchemaReader
 		}
 	}
 
-	string GetPK(string table){
-		
-		string sql=@"SELECT c.name AS ColumnName
-                FROM sys.indexes AS i 
-                INNER JOIN sys.index_columns AS ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id 
-                INNER JOIN sys.objects AS o ON i.object_id = o.object_id 
-                LEFT OUTER JOIN sys.columns AS c ON ic.object_id = c.object_id AND c.column_id = ic.column_id
-                WHERE (i.type = 1) AND (o.name = @tableName)";
+	string GetPK(string schema, string table){
+		string sql=@"SELECT COL_NAME(ic.OBJECT_ID, ic.column_id) AS ColumnName
+					FROM   sys.indexes AS i
+						INNER JOIN sys.index_columns  AS ic
+						ON  i.OBJECT_ID = ic.OBJECT_ID
+						AND i.index_id = ic.index_id
+					WHERE  i.is_primary_key = 1 
+						AND OBJECT_SCHEMA_NAME (ic.OBJECT_ID) = @schemaName
+						AND OBJECT_NAME(ic.OBJECT_ID) = @tableName";
 
 		using (var cmd=_factory.CreateCommand())
 		{
@@ -581,7 +582,11 @@ class SqlServerSchemaReader : SchemaReader
 
 			var p = cmd.CreateParameter();
 			p.ParameterName = "@tableName";
-			p.Value=table;
+			p.Value = table;
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "@schemaName";
+			p.Value = schema;
 			cmd.Parameters.Add(p);
 
 			var result=cmd.ExecuteScalar();
