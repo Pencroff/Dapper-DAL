@@ -3,9 +3,9 @@ Dapper-DAL
 
 Data access layer with Dapper as wrapper IDbConnection
 
-Good day. Very often when we start write some .NET project we use [Entity Framework (EF)][1] (Thanks Microsoft for good product). We use EF directly or sometimes we wrap EF with Repository or UnitOfWork and Repository patterns. We do it for testing or for hide EF from upper layers ([read more detail][2]). EF and LINQ very fast, simple and elegant solution.
+Good day. Very often when we start write some .NET project we use [Entity Framework (EF)][1] (Thanks Microsoft for good product). We use EF directly or sometimes we wrap EF with Repository or UnitOfWork and Repository patterns. We do it for testing or for hiding EF from upper layers ([read more detail][2]). EF and LINQ very fast, simple and elegant solution.
 
-And then in development process we understand - we need more better performance and move some bussines logic to stored prosedures in SQL. But unfortunatly Stored procedures couldn't elegant use in EF solution. We get high dependency with SP in upper layer.
+And then in development process we understand - we need more better performance and move some bussines logic to stored prosedures in SQL. But unfortunatly Stored procedures couldn't be used elegant with EF solution. We get high dependency with SP in upper layer.
 
 I try to resolve this problem in my current design. 
 What points I develop:
@@ -15,7 +15,7 @@ What points I develop:
 - minimum dependencies with data access layer (`IUnitOfWork`)
 - elegant executing queries and stored procedures
 
-Thanks awfuly [SamSaffron][3] for [Dapper.NET][4]
+Thanks a lot to [SamSaffron][3] for [Dapper.NET][4]
 
 Let's start explain about Dapper DAL.
 
@@ -31,7 +31,7 @@ container.Register<IDapperContext, DapperContext>();
 container.Register<IFactoryRepository, FactoryRepository>();
 container.Register<IUnitOfWork, UnitOfWork>();
 ```
-Than all classes in upper layer need just one dependency: `IUnitOfWork`. I recomend use constructor injection for Unit of work interface.
+Than all classes in upper layer need just one dependency: `IUnitOfWork`. I recomend to use constructor injection for Unit of work interface.
 
 ##Use any Repository for get data from database.
 ```C#
