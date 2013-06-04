@@ -49,8 +49,8 @@
     <Compile Include="General\EnumBase.cs" />
     <Compile Include="General\Interfaces\IEnumBase.cs" />
     <Compile Include="Infrastructure\DapperContext.cs" />
-    <Compile Include="Infrastructure\EnumStoredProcedures\EmptySpEnum.cs" />
-    <Compile Include="Infrastructure\EnumStoredProcedures\CustomerSpEnum.cs" />
+    <Compile Include="Infrastructure\EnumQueriesStoredProcedures\EmptyEnum.cs" />
+    <Compile Include="Infrastructure\EnumQueriesStoredProcedures\CustomerEnum.cs" />
     <Compile Include="Infrastructure\FactoryRepository.cs" />
     <Compile Include="Infrastructure\Interfaces\IDapperContext.cs" />
     <Compile Include="Infrastructure\Interfaces\IFactoryRepository.cs" />
