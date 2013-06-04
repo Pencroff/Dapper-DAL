@@ -9,6 +9,18 @@ namespace Dapper_DAL
     {
         public IUnitOfWork UnitOfWork { get; set; }
 
+        /// <summary>   
+        /// Constructor injection
+        /// </summary>
+        /// <param name="unitOfWork">reference to data access layer</param>
+        public Example(IUnitOfWork unitOfWork)
+        {
+            UnitOfWork = unitOfWork;
+        }
+
+        /// <summary>
+        /// Example manually UnitOfWork initialization
+        /// </summary>
         public void Initialization()
         {
             IDapperContext context = new DapperContext();
