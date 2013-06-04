@@ -35,12 +35,12 @@ Than all classes in upper layer need just one dependency: `IUnitOfWork`. I recom
 
 ##Use any Repository for get data from database.
 ```C#
-IRepository<Customer, CustomerEnum> repo = UnitOfWork.GetRepository<Customer, CustomerEnum>();
+IRepository<TModel, TEnum> repo = UnitOfWork.GetRepository<TModel, TEnum>();
 ```
 All repositories have two generic parameters:
 
--TModel - some type what can be mapped directly from some table of databace
--TEnum - special service class for store queries or stored procedures name with strong typing in development.
+- TModel - some type what can be mapped directly from some table of databace
+- TEnum - special service class for store queries or stored procedures name with strong typing in development
 
 
 
