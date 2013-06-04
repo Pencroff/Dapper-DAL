@@ -46,6 +46,7 @@
     <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Dapper\SqlMapperExtensions.cs" />
     <Compile Include="Dapper\SqlMapperExtensionsExtra.cs" />
+    <Compile Include="Example.cs" />
     <Compile Include="General\EnumBase.cs" />
     <Compile Include="General\Interfaces\IEnumBase.cs" />
     <Compile Include="Infrastructure\DapperContext.cs" />

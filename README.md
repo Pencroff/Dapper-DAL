@@ -25,14 +25,22 @@ IDapperContext context = new DapperContext();
 IFactoryRepository repoFactory = new FactoryRepository();
 IUnitOfWork unitOfWork = new UnitOfWork(context, repoFactory);
 ```
-You can easy setup all dependencies of Unit Of Work in some IoC container. I use [SimpleInjector][5] for example:
+We can easy setup all dependencies of Unit Of Work in some IoC container. Using [SimpleInjector][5] for example:
 ```C#
 container.Register<IDapperContext, DapperContext>();
 container.Register<IFactoryRepository, FactoryRepository>();
 container.Register<IUnitOfWork, UnitOfWork>();
 ```
+Than all classes in upper layer need just one dependency: `IUnitOfWork`. I recomend use constructor injection for Unit of work interface.
 
+##Use any Repository for get data from database.
+```C#
+IRepository<Customer, CustomerEnum> repo = UnitOfWork.GetRepository<Customer, CustomerEnum>();
+```
+All repositories have two generic parameters:
 
+-TModel - some type what can be mapped directly from some table of databace
+-TEnum - special service class for store queries or stored procedures name with strong typing in development.
 
 
 
