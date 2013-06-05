@@ -48,7 +48,7 @@ namespace Dapper_DAL
         {
             // Get Repository
             IRepository<Customer, CustomerEnum> repo = UnitOfWork.GetRepository<Customer, CustomerEnum>();
-            // Executing stored procedure
+            // Get data with filtering and ordering
             IEnumerable<Customer> customers = 
                 repo.GetBy(
                     where: new { Zip = "12345", Registered = new DateTime(year: 2013, month: 7, day: 7) }, 
