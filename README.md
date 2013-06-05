@@ -60,8 +60,10 @@ public interface IRepository<T, in TRepoQuery>
     IEnumerable<T> GetAll(IDbTransaction transaction = null, int? commandTimeout = null);
     IEnumerable<T> GetBy(object where = null, object order = null, IDbTransaction transaction = null, int? commandTimeout = null);
 
-    IEnumerable<TSp> Exec<TSp>(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null, int? commandTimeout = null);
-    void Exec(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null, int? commandTimeout = null);
+    IEnumerable<TSp> Exec<TSp>(TRepoQuery repoQuery, DynamicParameters param = null, 
+				IDbTransaction transaction = null, int? commandTimeout = null);
+    void Exec(TRepoQuery repoQuery, DynamicParameters param = null, 
+				IDbTransaction transaction = null, int? commandTimeout = null);
 }
 ```
 Some couple of words about properties and methods:
@@ -96,7 +98,8 @@ IEnumerable<Customer> customers = repo.Exec<Customer>(CustomerEnum.GetCustomerBy
 ```C#
 public class CustomerEnum : EnumBase<CustomerEnum, string>
 {
-    public static readonly CustomerEnum GetCustomerByPage = new CustomerEnum("GetCustomerByPage", "[dbo].[spCustomerListByPageGet]");
+    public static readonly CustomerEnum GetCustomerByPage = 
+		new CustomerEnum("GetCustomerByPage", "[dbo].[spCustomerListByPageGet]");
 
     public CustomerEnum(string Name, string EnumValue)
         : base(Name, EnumValue)
