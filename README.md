@@ -33,7 +33,7 @@ container.Register<IUnitOfWork, UnitOfWork>();
 ```
 Than all classes in upper layer need just one dependency: `IUnitOfWork`. I recomend to use constructor injection for Unit of work interface.
 
-##Get Repository for get data from database.
+##Using Repository
 ```C#
 IRepository<TModel, TEnum> repo = UnitOfWork.GetRepository<TModel, TEnum>();
 ```
@@ -76,7 +76,7 @@ Some couple of words about properties and methods:
 - `IEnumerable<T> GetBy(object where = null, object order = null, ...` - get entities with some `WHERE` and `ORDER` conditions
 - `IEnumerable<TSp> Exec<TSp>` and `void Exec` similar methods for executing complex queries or stored procedures, these methods have just one diference, second methods doesn't have return value
 
-Also I used ModelGenerator.tt from [SimpleCRUD][7] project for generating POCO object
+Also I used ModelGenerator.tt from [SimpleCRUD][7] project for generating POCO object. It was corrected for corect get primary key of table, setup table name in Table Attribute
 
 ### Example using `GetBy` Method
 ```C#
