@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using Dapper;
 using Dapper.Contrib.Extensions;
 using Dapper_DAL.Infrastructure;
 using Dapper_DAL.Infrastructure.EnumQueriesStoredProcedures;
@@ -41,7 +43,14 @@ namespace Dapper_DAL
             // Get Repository
             IRepository<Customer, CustomerEnum> repo = UnitOfWork.GetRepository<Customer, CustomerEnum>();
             // Executing stored procedure
-            IEnumerable<Customer> customers = repo.Exec<Customer>(CustomerEnum.GetCustomerByPage);
+            var param = new DynamicParameters();
+            param.Add("@startIndex", 10);
+            param.Add("@endIndex", 20);
+            param.Add("@count", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            //Example for string return / out param
+            //param.Add("@errorMsg", dbType: DbType.String, size: 4000, direction: ParameterDirection.ReturnValue);
+            IEnumerable<Customer> customers = repo.Exec<Customer>(CustomerEnum.GetCustomerByPage, param);
+            int count = param.Get<int>("@count");
         }
 
         public void GetDataByGetByMethod()
