@@ -5,7 +5,9 @@ using Dapper_DAL.General;
 
 namespace Dapper_DAL.Infrastructure.Interfaces
 {
-    public interface IRepository<T, in TRepoSp> where T : class where TRepoSp : EnumBase<TRepoSp, string>
+    public interface IRepository<T, in TRepoQuery>
+        where T : class
+        where TRepoQuery : EnumBase<TRepoQuery, string>
     {
         IDbConnection Conn { get; }
         IDapperContext Context { get; }
@@ -20,7 +22,7 @@ namespace Dapper_DAL.Infrastructure.Interfaces
         IEnumerable<T> GetAll(IDbTransaction transaction = null, int? commandTimeout = null);
         IEnumerable<T> GetBy(object where = null, object order = null, IDbTransaction transaction = null, int? commandTimeout = null);
 
-        IEnumerable<TSp> Exec<TSp>(TRepoSp storedProcedure, DynamicParameters param = null, IDbTransaction transaction = null, int? commandTimeout = null);
-        void Exec(TRepoSp storedProcedure, DynamicParameters param = null, IDbTransaction transaction = null, int? commandTimeout = null);
+        IEnumerable<TSp> Exec<TSp>(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null, int? commandTimeout = null);
+        void Exec(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null, int? commandTimeout = null);
     }
 }

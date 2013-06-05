@@ -8,7 +8,9 @@ using Dapper_DAL.Infrastructure.Interfaces;
 
 namespace Dapper_DAL.Infrastructure
 {
-    public class Repository<T, TRepoSp> : IRepository<T, TRepoSp> where T : class where TRepoSp : EnumBase<TRepoSp, string>
+    public class Repository<T, TRepoQuery> : IRepository<T, TRepoQuery>
+        where T : class
+        where TRepoQuery : EnumBase<TRepoQuery, string>
     {
         public IDbConnection Conn { get; private set; }
         public IDapperContext Context { get; private set; }
@@ -65,16 +67,16 @@ namespace Dapper_DAL.Infrastructure
             return Conn.GetBy<T>(where: where, order: order, transaction: transaction, commandTimeout: commandTimeout);
         }
 
-        public IEnumerable<TSp> Exec<TSp>(TRepoSp storedProcEnum, DynamicParameters param = null, IDbTransaction transaction = null,
+        public IEnumerable<TSp> Exec<TSp>(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null,
                                               int? commandTimeout = null)
         {
-            return Conn.Query<TSp>(storedProcEnum.Value, param, commandType: CommandType.StoredProcedure, transaction: transaction, commandTimeout: commandTimeout);
+            return Conn.Query<TSp>(repoQuery.Value, param, commandType: CommandType.StoredProcedure, transaction: transaction, commandTimeout: commandTimeout);
         }
 
-        public void Exec(TRepoSp storedProcEnum, DynamicParameters param = null, IDbTransaction transaction = null,
+        public void Exec(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null,
                                   int? commandTimeout = null)
         {
-            Conn.Execute(storedProcEnum.Value, param, commandType: CommandType.StoredProcedure, transaction: transaction, commandTimeout: commandTimeout);
+            Conn.Execute(repoQuery.Value, param, commandType: CommandType.StoredProcedure, transaction: transaction, commandTimeout: commandTimeout);
         }
     }
 }
