@@ -58,7 +58,8 @@ public interface IRepository<T, in TRepoQuery>
     T GetByKey(object key, IDbTransaction transaction = null, int? commandTimeout = null);
 
     IEnumerable<T> GetAll(IDbTransaction transaction = null, int? commandTimeout = null);
-    IEnumerable<T> GetBy(object where = null, object order = null, IDbTransaction transaction = null, int? commandTimeout = null);
+    IEnumerable<T> GetBy(object where = null, object order = null, 
+				IDbTransaction transaction = null, int? commandTimeout = null);
 
     IEnumerable<TSp> Exec<TSp>(TRepoQuery repoQuery, DynamicParameters param = null, 
 				IDbTransaction transaction = null, int? commandTimeout = null);
