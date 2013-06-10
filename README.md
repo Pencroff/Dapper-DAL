@@ -107,7 +107,7 @@ int count = param.Get<int>("@count");
 public class CustomerEnum : EnumBase<CustomerEnum, string>
 {
     public static readonly CustomerEnum GetCustomerByPage = 
-		new CustomerEnum("GetCustomerByPage", "[dbo].[spCustomerListByPageGet]");
+		new CustomerEnum("GetCustomerByPage", "[dbo].[spCustomerListByPageGet]", CommandType.StoredProcedure);
 
     public CustomerEnum(string Name, string EnumValue)
         : base(Name, EnumValue)

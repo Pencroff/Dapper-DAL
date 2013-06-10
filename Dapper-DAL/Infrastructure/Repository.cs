@@ -70,13 +70,13 @@ namespace Dapper_DAL.Infrastructure
         public IEnumerable<TSp> Exec<TSp>(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null,
                                               int? commandTimeout = null)
         {
-            return Conn.Query<TSp>(repoQuery.Value, param, commandType: CommandType.StoredProcedure, transaction: transaction, commandTimeout: commandTimeout);
+            return Conn.Query<TSp>(repoQuery.Value, param, commandType: repoQuery.CmdType, transaction: transaction, commandTimeout: commandTimeout);
         }
 
         public void Exec(TRepoQuery repoQuery, DynamicParameters param = null, IDbTransaction transaction = null,
                                   int? commandTimeout = null)
         {
-            Conn.Execute(repoQuery.Value, param, commandType: CommandType.StoredProcedure, transaction: transaction, commandTimeout: commandTimeout);
+            Conn.Execute(repoQuery.Value, param, commandType: repoQuery.CmdType, transaction: transaction, commandTimeout: commandTimeout);
         }
     }
 }

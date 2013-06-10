@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper_DAL.General.Interfaces;
 
@@ -9,12 +10,14 @@ namespace Dapper_DAL.General
     {
         #region Instance code
         public TValue Value { get; private set; }
+        public CommandType? CmdType { get; private set; }
         public string Name { get; private set; }
 
-        protected EnumBase(string Name, TValue EnumValue)
+        protected EnumBase(string Name, TValue EnumValue, CommandType? cmdType = null)
         {
             Value = EnumValue;
             this.Name = Name;
+            CmdType = cmdType;
             mapping.Add(Name, this);
         }
 
