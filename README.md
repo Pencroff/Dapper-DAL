@@ -128,6 +128,7 @@ var userRepo = UnitOfWork.GetRepository<User, EmptyEnum>();
 [6]:https://github.com/SamSaffron/dapper-dot-net/tree/master/Dapper.Contrib
 [7]:https://github.com/ericdc1/Dapper.SimpleCRUD
 
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/c5ee47a79b6ef93bd10651743bab2b0d "githalytics.com")](http://githalytics.com/Pencroff/Dapper-DAL)
 
 
 
