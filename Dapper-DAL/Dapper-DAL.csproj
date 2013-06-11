@@ -66,6 +66,9 @@
       <DependentUpon>ModelGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLBuilder\Interfaces\ISqlBuilder.cs" />
+    <Compile Include="SQLBuilder\DapperSqlBuilder.cs" />
+    <Compile Include="SQLBuilder\SqlBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -83,6 +86,7 @@
   <ItemGroup>
     <Content Include="dapper-dal-example-db.sql" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
