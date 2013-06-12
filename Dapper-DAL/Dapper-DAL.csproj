@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Enum\Condition.cs" />
     <Compile Include="Infrastructure\Enum\SortAs.cs" />
     <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Dapper\SqlMapperExtensions.cs" />
