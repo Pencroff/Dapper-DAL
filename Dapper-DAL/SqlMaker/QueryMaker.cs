@@ -22,9 +22,23 @@ namespace Dapper_DAL.SqlMaker
 
         private class Clause
         {
-            public static Clause New (ClauseType type, string name, string aliace = null, string condition = null, string direction = null, string extra = null)
+            public static Clause New(ClauseType type, string sqlPart, string name = null, string aliace = null,
+                                     string condition = null, string direction = null, string extra = null)
+            {
+                return new Clause
+                    {
+                        ClauseType = type,
+                        SqlPart = sqlPart,
+                        Name = name,
+                        Aliace = aliace,
+                        Condition = condition,
+                        Direction = direction,
+                        Extra = extra
+                    };
+            }
 
             public ClauseType ClauseType { get; private set; }
+            public string SqlPart { get; private set; }
             public string Name { get; private set; }
             public string Aliace { get; private set; }
             public string Condition { get; private set; }
@@ -56,17 +70,20 @@ namespace Dapper_DAL.SqlMaker
 
         public ISqlMakerSelect SelectDistinct(string columns = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Action, "SELECT DISTINCT\n", extra:columns));
+            return this;
         }
 
         public ISqlMakerInsert INSERT(string tableName)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Action, "INSERT INTO\n", name:tableName));
+            return this;
         }
 
         public ISqlMakerUpdate UPDATE(string tableName)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Action, "UPDATE\n", name: tableName));
+            return this;
         }
 
         public ISqlMakerDelete DELETE(string tableName)
