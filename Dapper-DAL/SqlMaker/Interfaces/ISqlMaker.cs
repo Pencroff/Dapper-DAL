@@ -7,7 +7,7 @@ namespace Dapper_DAL.SqlMaker.Interfaces
     {
         string GetRaw();
     }
-
+    
     //SELECT [ ALL | DISTINCT ] 
     //[TOP ( expression ) [PERCENT] [ WITH TIES ] ] 
     //< select_list > 
@@ -73,7 +73,7 @@ namespace Dapper_DAL.SqlMaker.Interfaces
     //[;]
     public interface ISqlMakerInsert : ISqlMakerBase
     {
-        ISqlMakerInsert Column(string columnName);
+        ISqlMakerInsert Col(string columnName);
         ISqlMakerInsert VALUES(string parameters = null);
         ISqlMakerInsert Param(string paramName);
     }
@@ -117,11 +117,14 @@ namespace Dapper_DAL.SqlMaker.Interfaces
     public interface ISqlMakerUpdate : ISqlMakerBase
     {
         ISqlMakerUpdate SET(string columnsValues = null);
-        ISqlMakerUpdate Value(string columnName, string parameterAliace);
+        ISqlMakerUpdate Val(string columnName, string parameterAliace);
         ISqlMakerUpdate WHERE(string whereConditions);
         ISqlMakerUpdate WHERE(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerUpdate WHERE(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerUpdate WhereAnd(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerUpdate WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerUpdate WhereOr(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerUpdate WhereOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
     //[ WITH <common_table_expression> [ ,...n ] ]
@@ -151,8 +154,11 @@ namespace Dapper_DAL.SqlMaker.Interfaces
     {
         ISqlMakerDelete WHERE(string whereConditions);
         ISqlMakerDelete WHERE(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerDelete WhereAnd(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerDelete WhereOr(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
     public interface ISqlFirst

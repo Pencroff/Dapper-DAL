@@ -11,7 +11,7 @@ namespace Dapper_DAL.SqlMaker
             Action,
             Table,
             Column,
-            Source,
+            Value,
         }
 
         private static List<Clause> _clauses;
@@ -22,7 +22,7 @@ namespace Dapper_DAL.SqlMaker
 
         private class Clause
         {
-            public static Clause New(ClauseType type, string sqlPart, string name = null, string aliace = null,
+            public static Clause New(ClauseType type, string sqlPart = null, string name = null, string aliace = null,
                                      string condition = null, string direction = null, string extra = null)
             {
                 return new Clause
@@ -62,38 +62,22 @@ namespace Dapper_DAL.SqlMaker
             }
         }
 
+        public string GetRaw()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #region SELECT
         public ISqlMakerSelect SELECT(string columns = null)
         {
-            Clauses.Add(Clause.New(ClauseType.Action, "SELECT\n", extra:columns));
+            Clauses.Add(Clause.New(ClauseType.Action, "SELECT\n", extra: columns));
             return this;
         }
 
         public ISqlMakerSelect SelectDistinct(string columns = null)
         {
-            Clauses.Add(Clause.New(ClauseType.Action, "SELECT DISTINCT\n", extra:columns));
+            Clauses.Add(Clause.New(ClauseType.Action, "SELECT DISTINCT\n", extra: columns));
             return this;
-        }
-
-        public ISqlMakerInsert INSERT(string tableName)
-        {
-            Clauses.Add(Clause.New(ClauseType.Action, "INSERT INTO\n", name:tableName));
-            return this;
-        }
-
-        public ISqlMakerUpdate UPDATE(string tableName)
-        {
-            Clauses.Add(Clause.New(ClauseType.Action, "UPDATE\n", name: tableName));
-            return this;
-        }
-
-        public ISqlMakerDelete DELETE(string tableName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public string GetRaw()
-        {
-            throw new System.NotImplementedException();
         }
 
         public ISqlMakerSelect UNION(bool IsALL = false)
@@ -103,55 +87,87 @@ namespace Dapper_DAL.SqlMaker
 
         public ISqlMakerSelect Col(string columnName, string columnAliace = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Column, "-", name: columnName, aliace: columnAliace));
+            return this;
         }
 
         public ISqlMakerSelect FROM(string tables = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Action, "FROM\n", extra: tables));
+            return this;
         }
 
         public ISqlMakerSelect Tab(string tableName, string tableAliace = null, string tableScheme = null)
         {
+            Clauses.Add(Clause.New(ClauseType.Table, "-", name: tableName, aliace: tableAliace, extra: tableScheme));
+            return this;
+        }
+
+        ISqlMakerSelect ISqlMakerSelect.WHERE(string whereConditions)
+        {
             throw new System.NotImplementedException();
+        }
+        #endregion SELECT
+
+        #region INSERT
+        public ISqlMakerInsert INSERT(string tableName)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "INSERT INTO\n", name: tableName));
+            return this;
+        }
+
+        public ISqlMakerInsert Col(string columnName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ISqlMakerInsert VALUES(string parameters = null)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ISqlMakerInsert Param(string paramName)
+        {
+            throw new System.NotImplementedException();
+        }
+        #endregion INSERT
+
+        #region UPDATE
+        public ISqlMakerUpdate UPDATE(string tableName)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "UPDATE\n", name: tableName));
+            return this;
         }
 
         public ISqlMakerUpdate SET(string columnsValues = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Action, "SET\n", extra: columnsValues));
+            return this;
         }
 
-        public ISqlMakerUpdate Value(string columnName, string parameterAliace)
+        public ISqlMakerUpdate Val(string columnName, string parameterAliace)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Value, "-", name: columnName, aliace: parameterAliace));
+            return this;
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WHERE(string whereConditions)
+        public ISqlMakerUpdate WHERE(string whereConditions)
         {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WHERE(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WhereAnd(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WhereOr(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WHERE(string whereConditions)
-        {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Action, "WHERE\n", extra: whereConditions));
+            return this;
         }
 
         ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, string condition, string parameterAliace)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        ISqlMakerDelete ISqlMakerDelete.WHERE(string fieldName, Condition condition, string parameterAliace)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, Condition condition, string parameterAliace)
         {
             throw new System.NotImplementedException();
         }
@@ -161,15 +177,64 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
+        ISqlMakerDelete ISqlMakerDelete.WhereAnd(string fieldName, Condition condition, string parameterAliace)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, Condition condition, string parameterAliace)
+        {
+            throw new System.NotImplementedException();
+        }
+
         ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, string condition, string parameterAliace)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WHERE(string whereConditions)
+        ISqlMakerDelete ISqlMakerDelete.WhereOr(string fieldName, Condition condition, string parameterAliace)
         {
             throw new System.NotImplementedException();
         }
+
+        ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, Condition condition, string parameterAliace)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion UPDATE
+
+        #region DELETE
+        public ISqlMakerDelete DELETE(string tableName)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "DELETE FROM\n", name: tableName));
+            return this;
+        }
+
+        ISqlMakerDelete ISqlMakerDelete.WHERE(string whereConditions)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "WHERE\n", extra: whereConditions));
+            return this;
+        }
+
+        ISqlMakerDelete ISqlMakerDelete.WHERE(string fieldName, string condition, string parameterAliace)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "WHERE\n", name: fieldName, condition: condition, aliace: parameterAliace));
+            return this;
+        }
+
+        ISqlMakerDelete ISqlMakerDelete.WhereAnd(string fieldName, string condition, string parameterAliace)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "\nAND", name: fieldName, condition: condition, aliace: parameterAliace));
+            return this;
+        }
+
+        ISqlMakerDelete ISqlMakerDelete.WhereOr(string fieldName, string condition, string parameterAliace)
+        {
+            Clauses.Add(Clause.New(ClauseType.Action, "\nOR", name: fieldName, condition: condition, aliace: parameterAliace));
+            return this;
+        }
+        #endregion DELETE
 
         ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, string condition, string parameterAliace)
         {
@@ -296,19 +361,5 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public ISqlMakerInsert Column(string columnName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ISqlMakerInsert VALUES(string parameters = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ISqlMakerInsert Param(string paramName)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
