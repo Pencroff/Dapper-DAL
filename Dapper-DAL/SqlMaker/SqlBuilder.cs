@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dapper
 {
-    public class DapperSqlBuilder
+    public class SqlBuilder
     {
         Dictionary<string, Clauses> data = new Dictionary<string, Clauses>();
         int seq;
@@ -106,29 +106,29 @@ namespace Dapper
             seq++;
         }
 
-        public SqlBuilder InnerJoin(string sql, dynamic parameters = null)
-        {
-            AddClause("innerjoin", sql, parameters, joiner: "\nINNER JOIN ", prefix: "\nINNER JOIN ", postfix: "\n");
-            return this;
-        }
+        //public SqlBuilder InnerJoin(string sql, dynamic parameters = null)
+        //{
+        //    AddClause("innerjoin", sql, parameters, joiner: "\nINNER JOIN ", prefix: "\nINNER JOIN ", postfix: "\n");
+        //    return this;
+        //}
 
-        public SqlBuilder LeftJoin(string sql, dynamic parameters = null)
-        {
-            AddClause("leftjoin", sql, parameters, joiner: "\nLEFT JOIN ", prefix: "\nLEFT JOIN ", postfix: "\n");
-            return this;
-        }
+        //public SqlBuilder LeftJoin(string sql, dynamic parameters = null)
+        //{
+        //    AddClause("leftjoin", sql, parameters, joiner: "\nLEFT JOIN ", prefix: "\nLEFT JOIN ", postfix: "\n");
+        //    return this;
+        //}
 
-        public SqlBuilder RightJoin(string sql, dynamic parameters = null)
-        {
-            AddClause("rightjoin", sql, parameters, joiner: "\nRIGHT JOIN ", prefix: "\nRIGHT JOIN ", postfix: "\n");
-            return this;
-        }
+        //public SqlBuilder RightJoin(string sql, dynamic parameters = null)
+        //{
+        //    AddClause("rightjoin", sql, parameters, joiner: "\nRIGHT JOIN ", prefix: "\nRIGHT JOIN ", postfix: "\n");
+        //    return this;
+        //}
 
-        public SqlBuilder Where(string sql, dynamic parameters = null)
-        {
-            AddClause("where", sql, parameters, " AND ", prefix: "WHERE ", postfix: "\n");
-            return this;
-        }
+        //public SqlBuilder Where(string sql, dynamic parameters = null)
+        //{
+        //    AddClause("where", sql, parameters, " AND ", prefix: "WHERE ", postfix: "\n");
+        //    return this;
+        //}
 
         public SqlBuilder OrderBy(string sql, dynamic parameters = null)
         {
@@ -136,11 +136,11 @@ namespace Dapper
             return this;
         }
 
-        public SqlBuilder Select(string sql, dynamic parameters = null)
-        {
-            AddClause("select", sql, parameters, " , ", prefix: "", postfix: "\n");
-            return this;
-        }
+        //public SqlBuilder Select(string sql, dynamic parameters = null)
+        //{
+        //    AddClause("select", sql, parameters, " , ", prefix: "", postfix: "\n");
+        //    return this;
+        //}
 
         public SqlBuilder AddParameters(dynamic parameters)
         {
@@ -148,11 +148,11 @@ namespace Dapper
             return this;
         }
 
-        public SqlBuilder Join(string sql, dynamic parameters = null)
-        {
-            AddClause("join", sql, parameters, joiner: "\nJOIN ", prefix: "\nJOIN ", postfix: "\n");
-            return this;
-        }
+        //public SqlBuilder Join(string sql, dynamic parameters = null)
+        //{
+        //    AddClause("join", sql, parameters, joiner: "\nJOIN ", prefix: "\nJOIN ", postfix: "\n");
+        //    return this;
+        //}
 
         public SqlBuilder GroupBy(string sql, dynamic parameters = null)
         {

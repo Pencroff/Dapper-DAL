@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Dapper_DAL.Infrastructure.Enum;
 
 namespace Dapper.Contrib.Extensions
 {
@@ -220,11 +221,5 @@ namespace Dapper.Contrib.Extensions
         public string Sql { get; set; }
         public IEnumerable<string> Where { get; set; }
         public IEnumerable<string> Order { get; set; }
-    }
-
-    public enum SortAs
-    {
-        Asc,
-        Desc
     }
 }

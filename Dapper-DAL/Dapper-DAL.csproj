@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Enum\SortAs.cs" />
     <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Dapper\SqlMapperExtensions.cs" />
     <Compile Include="Dapper\SqlMapperExtensionsExtra.cs" />
@@ -66,9 +67,9 @@
       <DependentUpon>ModelGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SQLBuilder\Interfaces\ISqlBuilder.cs" />
-    <Compile Include="SQLBuilder\DapperSqlBuilder.cs" />
-    <Compile Include="SQLBuilder\SqlBuilder.cs" />
+    <Compile Include="SqlMaker\Interfaces\ISqlMaker.cs" />
+    <Compile Include="SqlMaker\SqlBuilder.cs" />
+    <Compile Include="SqlMaker\QueryMaker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
