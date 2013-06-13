@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper-DAL", "Dapper-DAL.csproj", "{822D9C11-D326-44EF-A45A-EA9F0D8ADF91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDapperDal", "..\TestDapperDal\TestDapperDal.csproj", "{B4B406BD-0DEA-4FFD-8AEC-BB75360B13B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{822D9C11-D326-44EF-A45A-EA9F0D8ADF91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{822D9C11-D326-44EF-A45A-EA9F0D8ADF91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{822D9C11-D326-44EF-A45A-EA9F0D8ADF91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4B406BD-0DEA-4FFD-8AEC-BB75360B13B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4B406BD-0DEA-4FFD-8AEC-BB75360B13B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4B406BD-0DEA-4FFD-8AEC-BB75360B13B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4B406BD-0DEA-4FFD-8AEC-BB75360B13B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
