@@ -74,133 +74,19 @@ namespace Dapper_DAL.SqlMaker
         }
 
         #region SELECT
-        public ISqlMakerSelect SELECT(string columns = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ISqlMakerSelect SelectDistinct(string columns = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        
         #endregion SELECT
 
         #region INSERT
-        public ISqlMakerInsert INSERT(string tableName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ISqlMakerInsert Col(string columnName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ISqlMakerInsert VALUES(string parameters = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ISqlMakerInsert Param(string paramName)
-        {
-            throw new System.NotImplementedException();
-        }
+        
         #endregion INSERT
 
         #region UPDATE
-        public ISqlMakerUpdate UPDATE(string tableName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
+        
         #endregion UPDATE
 
         #region DELETE
-        public ISqlMakerDelete DELETE(string tableName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate SET(string columnsValues = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate Val(string columnName, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WHERE(string whereConditions)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WHERE(string fieldName, string condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WhereAnd(string fieldName, string condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WhereOr(string fieldName, string condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerUpdate WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WHERE(string whereConditions)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WHERE(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WHERE(string fieldName, Condition condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WhereAnd(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WhereAnd(string fieldName, Condition condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WhereOr(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerDelete ISqlMakerDelete.WhereOr(string fieldName, Condition condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
+        
         #endregion DELETE
 
         
