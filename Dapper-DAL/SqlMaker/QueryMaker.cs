@@ -89,7 +89,7 @@ namespace Dapper_DAL.SqlMaker
                 {
                     case ClauseType.ActionInsert:
                         sb.Append(clause.SqlPart);
-                        sb.Append("\t");
+                        sb.Append("\n\t");
                         sb.Append(TableNameWithShema(sqlScheme, clause.Name));
                         break;
                     case ClauseType.Column:
@@ -113,9 +113,15 @@ namespace Dapper_DAL.SqlMaker
                         }
                         break;
                     case ClauseType.ActionInsertValues:
+                        //INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t);
+                        sb.Append("\n\t");
+                        sb.Append(clause.SqlPart);
+                        sb.Append(" (");
+                        break;
+                    case ClauseType.Parameter:
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException("Wrong clause type for Insert resolving");
+                        throw new ArgumentOutOfRangeException("Wrong clause type in Insert resolving method");
                 }
             }
             return sb.ToString();
@@ -312,7 +318,7 @@ namespace Dapper_DAL.SqlMaker
         #region INSERT
         public virtual ISqlMakerInsert INSERT(string tableName)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionInsert, "INSERT INTO\n", name: tableName));
+            Clauses.Add(Clause.New(ClauseType.ActionInsert, "INSERT INTO", name: tableName));
             return this;
         }
         public virtual ISqlMakerInsert Col(string columnName)
@@ -323,7 +329,7 @@ namespace Dapper_DAL.SqlMaker
 
         public virtual ISqlMakerInsert VALUES(string parameters = null)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionInsertValues, "VALUES\n", extra: parameters));
+            Clauses.Add(Clause.New(ClauseType.ActionInsertValues, "VALUES", extra: parameters));
             return this;
         }
 
