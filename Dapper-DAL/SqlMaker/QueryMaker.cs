@@ -70,17 +70,40 @@ namespace Dapper_DAL.SqlMaker
             return _sqlMaker;
         }
 
-        #region Resolve Sql Query
+        #region Common Method
         private static string TableNameWithShema(string scheme, string tableName)
         {
             return string.Format("{0}[{1}]", scheme, tableName);
         }
+        private static string ResolveParameters(string extra)
+        {
+            var sb = new StringBuilder();
+            var delimiters = new char[] { ',', ';' };
+            var array = extra.Split(delimiters);
+            var firstParam = true;
+            foreach (var s in array)
+            {
+                if (firstParam)
+                {
+                    sb.Append("\n\t\t" + s.Trim());
+                    firstParam = false;
+                }
+                else
+                {
+                    sb.Append("\n\t\t, " + s.Trim());
+                }
+            }
+            return sb.ToString();
+        }
+        #endregion
 
+        #region Resolve Sql Query
         private static string ResolveInsert(IEnumerable<Clause> clauses, string dbScheme)
         {
             var sb = new StringBuilder();
             var sqlScheme = dbScheme != null ? string.Format("[{0}].", dbScheme) : string.Empty;
             var firstCol = true;
+            var lastBkt = false;
             var colCount = clauses.Count(i => i.ClauseType == ClauseType.Column);
             var count = 0;
             foreach (var clause in clauses)
@@ -113,16 +136,25 @@ namespace Dapper_DAL.SqlMaker
                         }
                         break;
                     case ClauseType.ActionInsertValues:
+                        lastBkt = true;
                         //INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t);
                         sb.Append("\n\t");
                         sb.Append(clause.SqlPart);
                         sb.Append(" (");
+                        if (!string.IsNullOrEmpty(clause.Extra))
+                        {
+                            sb.Append(ResolveParameters(clause.Extra));
+                        }
                         break;
                     case ClauseType.Parameter:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("Wrong clause type in Insert resolving method");
                 }
+            }
+            if (lastBkt)
+            {
+                sb.Append("\n\t);");
             }
             return sb.ToString();
         }
