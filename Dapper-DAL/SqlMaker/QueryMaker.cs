@@ -23,6 +23,10 @@ namespace Dapper_DAL.SqlMaker
             Condition, //col<condition><param>
         }
 
+        private static string brIndent = "\n\t";
+        private static string brIndentX2 = "\n\t\t";
+        private static string brIndentX3 = "\n\t\t\t";
+
         private static string _dbScheme;
         private static List<Clause> _clauses;
         private static List<Clause> Clauses
@@ -75,7 +79,7 @@ namespace Dapper_DAL.SqlMaker
         {
             return string.Format("{0}[{1}]", scheme, tableName);
         }
-        private static string ResolveParameters(string extra)
+        private static string ResolveStringToRows(string extra, string indent)
         {
             var sb = new StringBuilder();
             var delimiters = new char[] { ',', ';' };
@@ -85,12 +89,12 @@ namespace Dapper_DAL.SqlMaker
             {
                 if (firstParam)
                 {
-                    sb.Append("\n\t\t" + s.Trim());
+                    sb.Append(indent + s.Trim());
                     firstParam = false;
                 }
                 else
                 {
-                    sb.Append("\n\t\t, " + s.Trim());
+                    sb.Append(indent + ", " + s.Trim());
                 }
             }
             return sb.ToString();
@@ -98,55 +102,66 @@ namespace Dapper_DAL.SqlMaker
         #endregion
 
         #region Resolve Sql Query
-        private static string ResolveInsert(IEnumerable<Clause> clauses, string dbScheme)
+        private static string ResolveInsert(IEnumerable<Clause> list, string dbScheme)
         {
             var sb = new StringBuilder();
             var sqlScheme = dbScheme != null ? string.Format("[{0}].", dbScheme) : string.Empty;
-            var firstCol = true;
+            var isFirstCol = true;
             var lastBkt = false;
-            var colCount = clauses.Count(i => i.ClauseType == ClauseType.Column);
+            var insertedParams = false;
+            var colCount = list.Count(i => i.ClauseType == ClauseType.Column);
             var count = 0;
-            foreach (var clause in clauses)
+            foreach (var clause in list)
             {
                 switch (clause.ClauseType)
                 {
                     case ClauseType.ActionInsert:
                         sb.Append(clause.SqlPart);
-                        sb.Append("\n\t");
+                        sb.Append(brIndent);
                         sb.Append(TableNameWithShema(sqlScheme, clause.Name));
                         break;
                     case ClauseType.Column:
                         count += 1;
-                        if (firstCol)
+                        if (isFirstCol)
                         {
                             sb.Append(" (");
                         }
-                        if (firstCol)
+                        if (isFirstCol)
                         {
-                            sb.Append("\n\t\t[" + clause.Name + "]");
-                            firstCol = false;
+                            sb.Append(brIndentX2 + "[" + clause.Name + "]");
+                            isFirstCol = false;
                         }
                         else
                         {
-                            sb.Append("\n\t\t, [" + clause.Name + "]");
+                            sb.Append(brIndentX2 + ", [" + clause.Name + "]");
                         }
                         if (count == colCount)
                         {
-                            sb.Append("\n\t)");
+                            sb.Append(brIndent + ")");
                         }
                         break;
                     case ClauseType.ActionInsertValues:
                         lastBkt = true;
-                        //INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t);
-                        sb.Append("\n\t");
+                        sb.Append(brIndent);
                         sb.Append(clause.SqlPart);
                         sb.Append(" (");
                         if (!string.IsNullOrEmpty(clause.Extra))
                         {
-                            sb.Append(ResolveParameters(clause.Extra));
+                            insertedParams = true;
+                            sb.Append(ResolveStringToRows(clause.Extra, brIndentX2));
                         }
                         break;
                     case ClauseType.Parameter:
+                        var paramName = clause.Name.Contains("@") ? clause.Name.Trim() : "@" + clause.Name.Trim();
+                        if (!insertedParams)
+                        {
+                            insertedParams = true;
+                            sb.Append(brIndentX2 + paramName);
+                        }
+                        else
+                        {
+                            sb.Append(brIndentX2 + ", " + paramName);
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("Wrong clause type in Insert resolving method");
@@ -154,7 +169,48 @@ namespace Dapper_DAL.SqlMaker
             }
             if (lastBkt)
             {
-                sb.Append("\n\t);");
+                sb.Append(brIndent + ");");
+            }
+            return sb.ToString();
+        }
+
+        private static string ResolveSelect(List<Clause> list, string dbScheme)
+        {
+            var sb = new StringBuilder();
+            var sqlScheme = dbScheme != null ? string.Format("[{0}].", dbScheme) : string.Empty;
+            bool isFirstCol = true;
+            foreach (var clause in list)
+            {
+                switch (clause.ClauseType)
+                {
+                    case ClauseType.ActionSelect:
+                        isFirstCol = true; // SELECT or UNION
+                        sb.Append(clause.SqlPart);
+                        if (!string.IsNullOrEmpty(clause.Extra))
+                        {
+                            isFirstCol = false;
+                            sb.Append(ResolveStringToRows(clause.Extra, brIndent));
+                        }
+                        break;
+                    case ClauseType.Table:
+                        break;
+                    case ClauseType.Column:
+                        var aliace = string.IsNullOrEmpty(clause.Aliace) ? string.Empty : " AS " + clause.Aliace.Trim();
+                        if (isFirstCol)
+                        {
+                            isFirstCol = false;
+                            sb.Append(brIndent + clause.Name.Trim() + aliace);
+                        }
+                        else
+                        {
+                            sb.Append(brIndent + ", " + clause.Name.Trim() + aliace);
+                        }
+                        break;
+                    case ClauseType.Condition:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             return sb.ToString();
         }
@@ -176,6 +232,7 @@ namespace Dapper_DAL.SqlMaker
                 case ClauseType.ActionUpdate:
                     break;
                 case ClauseType.ActionSelect:
+                    sqlResult = ResolveSelect(Clauses, _dbScheme);
                     break;
                 case ClauseType.ActionDelete:
                     break;
@@ -184,26 +241,31 @@ namespace Dapper_DAL.SqlMaker
             }
             return sqlResult;
         }
-
+        
         #region SELECT
         public virtual ISqlMakerSelect SELECT(string columns = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelect, "SELECT", extra: columns));
+            return this;
         }
 
         public virtual ISqlMakerSelect SelectDistinct(string columns = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelect, "SELECT DISTINCT", extra: columns));
+            return this;
         }
 
         public virtual ISqlMakerSelect UNION(bool IsALL = false)
         {
-            throw new System.NotImplementedException();
+            var sqlPart = "\nUNION" + (IsALL ? " ALL" : string.Empty) + "\nSELECT";
+            Clauses.Add(Clause.New(ClauseType.ActionSelect, sqlPart));
+            return this;
         }
 
         public virtual ISqlMakerSelect Col(string columnName, string columnAliace = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Column, name: columnName, aliace: columnAliace));
+            return this;
         }
 
         public virtual ISqlMakerSelect FROM(string tables = null)
