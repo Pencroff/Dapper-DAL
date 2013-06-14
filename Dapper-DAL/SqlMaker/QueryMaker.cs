@@ -15,6 +15,7 @@ namespace Dapper_DAL.SqlMaker
             ActionInsertValues,
             ActionUpdate,
             ActionSelect,
+            ActionSelectWhere,
             ActionDelete,
             Table,
             Column,
@@ -75,9 +76,29 @@ namespace Dapper_DAL.SqlMaker
         }
 
         #region Common Method
-        private static string TableNameWithShema(string scheme, string tableName)
+        private static string FormatScheme(string globalScheme, string currentScheme = null)
         {
-            return string.Format("{0}[{1}]", scheme, tableName);
+            if (!string.IsNullOrEmpty(currentScheme))
+            {
+                return string.Format("[{0}].", currentScheme.Trim());
+            }
+            if (!string.IsNullOrEmpty(globalScheme))
+            {
+                return string.Format("[{0}].", globalScheme.Trim());
+            }
+            return string.Empty;
+        }
+        private static string FormatAliace(string aliace)
+        {
+            if (!string.IsNullOrEmpty(aliace))
+            {
+                return string.Format(" AS [{0}]", aliace.Trim());
+            }
+            return string.Empty;
+        }
+        private static string FormatTableNameWithShema(string scheme, string tableName)
+        {
+            return string.Format("{0}[{1}]", scheme, tableName.Trim());
         }
         private static string ResolveStringToRows(string extra, string indent)
         {
@@ -99,13 +120,17 @@ namespace Dapper_DAL.SqlMaker
             }
             return sb.ToString();
         }
+        private static string FormatParameter(string paramName)
+        {
+            return paramName.Contains("@") ? paramName.Trim() : "@" + paramName.Trim();
+        }
         #endregion
 
         #region Resolve Sql Query
         private static string ResolveInsert(IEnumerable<Clause> list, string dbScheme)
         {
             var sb = new StringBuilder();
-            var sqlScheme = dbScheme != null ? string.Format("[{0}].", dbScheme) : string.Empty;
+            var sqlScheme = FormatScheme(dbScheme);
             var isFirstCol = true;
             var lastBkt = false;
             var insertedParams = false;
@@ -118,7 +143,7 @@ namespace Dapper_DAL.SqlMaker
                     case ClauseType.ActionInsert:
                         sb.Append(clause.SqlPart);
                         sb.Append(brIndent);
-                        sb.Append(TableNameWithShema(sqlScheme, clause.Name));
+                        sb.Append(FormatTableNameWithShema(sqlScheme, clause.Name));
                         break;
                     case ClauseType.Column:
                         count += 1;
@@ -152,7 +177,7 @@ namespace Dapper_DAL.SqlMaker
                         }
                         break;
                     case ClauseType.Parameter:
-                        var paramName = clause.Name.Contains("@") ? clause.Name.Trim() : "@" + clause.Name.Trim();
+                        var paramName = FormatParameter(clause.Name);
                         if (!insertedParams)
                         {
                             insertedParams = true;
@@ -177,28 +202,51 @@ namespace Dapper_DAL.SqlMaker
         private static string ResolveSelect(List<Clause> list, string dbScheme)
         {
             var sb = new StringBuilder();
-            var sqlScheme = dbScheme != null ? string.Format("[{0}].", dbScheme) : string.Empty;
-            bool isFirstCol = true;
+            var sqlScheme = FormatScheme(dbScheme);
+            bool isFirst = true;
             foreach (var clause in list)
             {
                 switch (clause.ClauseType)
                 {
                     case ClauseType.ActionSelect:
-                        isFirstCol = true; // SELECT or UNION
+                        isFirst = true; // SELECT or UNION
                         sb.Append(clause.SqlPart);
                         if (!string.IsNullOrEmpty(clause.Extra))
                         {
-                            isFirstCol = false;
+                            isFirst = false;
                             sb.Append(ResolveStringToRows(clause.Extra, brIndent));
                         }
                         break;
+                    case ClauseType.ActionSelectWhere:
+                        isFirst = true; // SELECT or UNION
+                        sb.Append(clause.SqlPart);
+                        if (!string.IsNullOrEmpty(clause.Extra))
+                        {
+                            isFirst = false;
+                            sb.Append(brIndent + clause.Extra.Trim());
+                        }
+                        break;
                     case ClauseType.Table:
+                        //var example = "SELECT\n\tId AS Id\nFROM"
+                        //+ "\n\t[dbo].[Table]\n\t, [dbo].[Table] AS [Tab]\n\t, [tbl].[Table] AS Tab";
+                        var scheme = FormatScheme(dbScheme, clause.Extra);
+                        var tabName = FormatTableNameWithShema(scheme, clause.Name);
+                        var tabAliace = FormatAliace(clause.Aliace);
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                            sb.Append(brIndent + tabName + tabAliace);
+                        }
+                        else
+                        {
+                            sb.Append(brIndent + ", " + tabName + tabAliace);
+                        }
                         break;
                     case ClauseType.Column:
                         var aliace = string.IsNullOrEmpty(clause.Aliace) ? string.Empty : " AS " + clause.Aliace.Trim();
-                        if (isFirstCol)
+                        if (isFirst)
                         {
-                            isFirstCol = false;
+                            isFirst = false;
                             sb.Append(brIndent + clause.Name.Trim() + aliace);
                         }
                         else
@@ -270,22 +318,26 @@ namespace Dapper_DAL.SqlMaker
 
         public virtual ISqlMakerSelect FROM(string tables = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelect, "\nFROM", extra: tables));
+            return this;
         }
 
         public virtual ISqlMakerSelect Tab(string tableName, string tableAliace = null, string tableScheme = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.Table, name: tableName, aliace: tableAliace, extra: tableScheme));
+            return this;
         }
 
         ISqlMakerSelect ISqlMakerSelect.WHERE(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, "\nWHERE", extra: whereConditions));
+            return this;
         }
 
         ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, string condition, string parameterAliace)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, "\nWHERE", name: fieldName, condition: condition, aliace: parameterAliace));
+            return this;
         }
 
         ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, Condition condition, string parameterAliace)
