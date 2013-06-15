@@ -112,5 +112,37 @@ namespace TestDapperDal.SqlMakerTest
                         + "\n\t[dbo].[Customer]\nWHERE\n\tZip = @zip AND Id >= @id";
             Assert.That(sql, Is.EqualTo(example).IgnoreCase);
         }
+
+        [Test]
+        public void SimpleWhereAndSelectTest()
+        {
+            var maker = QueryMaker.New(_dbScheme)
+                .SELECT()
+                    .Col("Id", "Id")
+                .FROM()
+                    .Tab("Customer")
+                .WHERE("Zip = @zip")
+                .WhereAnd("Id >= @id");
+            var sql = maker.GetRaw();
+            var example = "SELECT\n\tId AS Id\nFROM"
+                        + "\n\t[dbo].[Customer]\nWHERE\n\tZip = @zip\n\tAND Id >= @id";
+            Assert.That(sql, Is.EqualTo(example).IgnoreCase);
+        }
+
+        [Test]
+        public void SimpleWhereOrSelectTest()
+        {
+            var maker = QueryMaker.New(_dbScheme)
+                .SELECT()
+                    .Col("Id", "Id")
+                .FROM()
+                    .Tab("Customer")
+                .WHERE("Zip = @zip")
+                .WhereOr("Id >= @id");
+            var sql = maker.GetRaw();
+            var example = "SELECT\n\tId AS Id\nFROM"
+                        + "\n\t[dbo].[Customer]\nWHERE\n\tZip = @zip\n\tOR Id >= @id";
+            Assert.That(sql, Is.EqualTo(example).IgnoreCase);
+        }
     }
 }
