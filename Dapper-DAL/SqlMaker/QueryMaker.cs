@@ -501,30 +501,30 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
         #endregion UPDATE
 
         #region DELETE
@@ -538,30 +538,30 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public virtual ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         public virtual ISqlMakerDelete WhereAnd(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public virtual ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         public virtual ISqlMakerDelete WhereOr(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public virtual ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
         #endregion DELETE
     }
 }

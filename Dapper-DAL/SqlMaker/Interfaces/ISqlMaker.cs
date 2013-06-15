@@ -108,11 +108,11 @@ namespace Dapper_DAL.SqlMaker.Interfaces
         ISqlMakerUpdate SET(string columnsValues = null);
         ISqlMakerUpdate Val(string columnName, string parameterAliace);
         ISqlMakerUpdate WHERE(string whereConditions);
-        ISqlMakerUpdate WHERE(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerUpdate WHERE(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerUpdate WhereAnd(string whereConditions);
-        ISqlMakerUpdate WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerUpdate WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerUpdate WhereOr(string whereConditions);
-        ISqlMakerUpdate WhereOr(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerUpdate WhereOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
     //[ WITH <common_table_expression> [ ,...n ] ]
@@ -141,11 +141,11 @@ namespace Dapper_DAL.SqlMaker.Interfaces
     public interface ISqlMakerDelete : ISqlMakerBase
     {
         ISqlMakerDelete WHERE(string whereConditions);
-        ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerDelete WhereAnd(string whereConditions);
-        ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerDelete WhereOr(string whereConditions);
-        ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
     public interface ISqlFirst
