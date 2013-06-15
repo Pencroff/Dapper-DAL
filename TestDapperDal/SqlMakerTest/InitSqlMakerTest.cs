@@ -31,7 +31,7 @@ namespace TestDapperDal.SqlMakerTest
             var newQuery = QueryMaker.Current;
             try
             {
-                newQuery.GetRaw();
+                newQuery.RawSql();
             }
             catch (Exception ex)
             {

@@ -5,17 +5,9 @@ namespace Dapper_DAL.SqlMaker.Interfaces
 {
     public interface ISqlMakerBase
     {
-        string GetRaw();
+        string RawSql();
     }
     
-    //SELECT [ ALL | DISTINCT ] 
-    //[TOP ( expression ) [PERCENT] [ WITH TIES ] ] 
-    //< select_list > 
-    //[ INTO new_table ] 
-    //[ FROM { <table_source> } [ ,...n ] ] 
-    //[ WHERE <search_condition> ] 
-    //[ <GROUP BY> ] 
-    //[ HAVING < search_condition > ]
     public interface ISqlMakerSelect : ISqlMakerBase
     {
         ISqlMakerSelect UNION(bool IsALL = false);
@@ -24,30 +16,28 @@ namespace Dapper_DAL.SqlMaker.Interfaces
         ISqlMakerSelect FROM(string tables = null);
         ISqlMakerSelect Tab(string tableName, string tableAliace = null, string tableScheme = null);
         ISqlMakerSelect WHERE(string whereConditions);
-        ISqlMakerSelect WHERE(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerSelect WHERE(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerSelect WhereAnd(string whereConditions);
-        ISqlMakerSelect WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerSelect WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerSelect WhereOr(string whereConditions);
-        ISqlMakerSelect WhereOr(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerSelect WhereOr(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerSelect JOIN(string tableName, string tableAliace = null);
-        ISqlMakerSelect InnerJoin(string tableName, string tableAliace = null);
         ISqlMakerSelect LeftJoin(string tableName, string tableAliace = null);
         ISqlMakerSelect RightJoin(string tableName, string tableAliace = null);
-        ISqlMakerSelect ON(string leftColumn, string rightColumn);
-        ISqlMakerSelect OnAnd(string leftColumn, string rightColumn);
-        ISqlMakerSelect OnOr(string leftColumn, string rightColumn);
-        ISqlMakerSelect ORDERBY(string columnName, string direction);
+        ISqlMakerSelect FullJoin(string tableName, string tableAliace = null);
+        ISqlMakerSelect ON(string condition);
+        ISqlMakerSelect OnAnd(string condition);
+        ISqlMakerSelect OnOr(string condition);
         ISqlMakerSelect ORDERBY(string columnName, SortAs direction);
-        ISqlMakerSelect OrderByThen(string columnName, string direction);
-        ISqlMakerSelect OrderByThen(string columnName, SortAs direction);
+        ISqlMakerSelect OrderThen(string columnName, SortAs direction);
         ISqlMakerSelect GROUPBY(string columnName);
-        ISqlMakerSelect GroupByThen(string columnName);
+        ISqlMakerSelect GroupThen(string columnName);
         ISqlMakerSelect HAVING(string havingConditions);
-        ISqlMakerSelect HAVING(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerSelect HAVING(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerSelect HavingAnd(string havingConditions);
-        ISqlMakerSelect HavingAnd(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerSelect HavingAnd(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerSelect HavingOr(string havingConditions);
-        ISqlMakerSelect HavingOr(string fieldName, Condition condition, string parameterAliace = null);
+        //ISqlMakerSelect HavingOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
     //[ WITH <common_table_expression> [ ,...n ] ]

@@ -16,17 +16,18 @@ namespace Dapper_DAL.SqlMaker
             ActionUpdate,
             ActionSelect,
             ActionSelectWhere,
+            ActionSelectJoin,
+            ActionSelectOn,
             ActionDelete,
             Table,
             Column,
             Value, //Col = <valParam>
             Parameter, //<param>
-            Condition, //col<condition><param>
         }
 
+        private static string br = "\n";
         private static string brIndent = "\n\t";
         private static string brIndentX2 = "\n\t\t";
-        private static string brIndentX3 = "\n\t\t\t";
 
         private static string _dbScheme;
         private static List<Clause> _clauses;
@@ -92,7 +93,7 @@ namespace Dapper_DAL.SqlMaker
         {
             if (!string.IsNullOrEmpty(aliace))
             {
-                return string.Format(" AS [{0}]", aliace.Trim());
+                return string.Format(" AS {0}", aliace.Trim());
             }
             return string.Empty;
         }
@@ -218,17 +219,19 @@ namespace Dapper_DAL.SqlMaker
                         }
                         break;
                     case ClauseType.ActionSelectWhere:
-                        isFirst = true; // SELECT or UNION
                         sb.Append(clause.SqlPart);
-                        if (!string.IsNullOrEmpty(clause.Extra))
-                        {
-                            isFirst = false;
-                            sb.Append(brIndent + clause.Extra.Trim());
-                        }
+                        sb.Append(clause.Extra.Trim());
+                        break;
+                    case ClauseType.ActionSelectJoin:
+                        var schemeJoin = FormatScheme(dbScheme, clause.Extra);
+                        var tabNameJoin = FormatTableNameWithShema(schemeJoin, clause.Name);
+                        var tabAliaceJoin = FormatAliace(clause.Aliace);
+                        sb.Append(clause.SqlPart);
+                        sb.Append(tabNameJoin + tabAliaceJoin);
+                        break;
+                    case ClauseType.ActionSelectOn:
                         break;
                     case ClauseType.Table:
-                        //var example = "SELECT\n\tId AS Id\nFROM"
-                        //+ "\n\t[dbo].[Table]\n\t, [dbo].[Table] AS [Tab]\n\t, [tbl].[Table] AS Tab";
                         var scheme = FormatScheme(dbScheme, clause.Extra);
                         var tabName = FormatTableNameWithShema(scheme, clause.Name);
                         var tabAliace = FormatAliace(clause.Aliace);
@@ -254,8 +257,6 @@ namespace Dapper_DAL.SqlMaker
                             sb.Append(brIndent + ", " + clause.Name.Trim() + aliace);
                         }
                         break;
-                    case ClauseType.Condition:
-                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -263,8 +264,8 @@ namespace Dapper_DAL.SqlMaker
             return sb.ToString();
         }
         #endregion Resolve Sql Query
-        
-        public string GetRaw()
+
+        public string RawSql()
         {
             string sqlResult = null;
             if (Clauses.Count == 0)
@@ -305,7 +306,7 @@ namespace Dapper_DAL.SqlMaker
 
         public virtual ISqlMakerSelect UNION(bool IsALL = false)
         {
-            var sqlPart = "\nUNION" + (IsALL ? " ALL" : string.Empty) + "\nSELECT";
+            var sqlPart = br + "UNION" + (IsALL ? " ALL" : string.Empty) + br + "SELECT";
             Clauses.Add(Clause.New(ClauseType.ActionSelect, sqlPart));
             return this;
         }
@@ -318,7 +319,7 @@ namespace Dapper_DAL.SqlMaker
 
         public virtual ISqlMakerSelect FROM(string tables = null)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelect, "\nFROM", extra: tables));
+            Clauses.Add(Clause.New(ClauseType.ActionSelect, br + "FROM", extra: tables));
             return this;
         }
 
@@ -330,73 +331,77 @@ namespace Dapper_DAL.SqlMaker
 
         ISqlMakerSelect ISqlMakerSelect.WHERE(string whereConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, "\nWHERE", extra: whereConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, br + "WHERE" + brIndent, extra: whereConditions));
             return this;
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         ISqlMakerSelect ISqlMakerSelect.WhereAnd(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, brIndent + "AND ", extra: whereConditions));
+            return this;
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //ISqlMakerSelect ISqlMakerSelect.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         ISqlMakerSelect ISqlMakerSelect.WhereOr(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, brIndent + "OR ", extra: whereConditions));
+            return this;
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //ISqlMakerSelect ISqlMakerSelect.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         public virtual ISqlMakerSelect JOIN(string tableName, string tableAliace = null)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerSelect InnerJoin(string tableName, string tableAliace = null)
-        {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectJoin, br + "INNER JOIN ", name: tableName, aliace: tableAliace));
+            return this;
         }
 
         public virtual ISqlMakerSelect LeftJoin(string tableName, string tableAliace = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectJoin, br + "LEFT JOIN ", name: tableName, aliace: tableAliace));
+            return this;
         }
 
         public virtual ISqlMakerSelect RightJoin(string tableName, string tableAliace = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectJoin, br + "RIGHT JOIN ", name: tableName, aliace: tableAliace));
+            return this;
         }
 
-        public virtual ISqlMakerSelect ON(string leftColumn, string rightColumn)
+        public virtual ISqlMakerSelect FullJoin(string tableName, string tableAliace = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectJoin, br + "FULL JOIN ", name: tableName, aliace: tableAliace));
+            return this;
         }
 
-        public virtual ISqlMakerSelect OnAnd(string leftColumn, string rightColumn)
+        public virtual ISqlMakerSelect ON(string condition)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, brIndent + "ON ", extra: condition));
+            return this;
         }
 
-        public virtual ISqlMakerSelect OnOr(string leftColumn, string rightColumn)
+        public virtual ISqlMakerSelect OnAnd(string condition)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, brIndent + "AND ", extra: condition));
+            return this;
         }
 
-        public virtual ISqlMakerSelect ORDERBY(string columnName, string direction)
+        public virtual ISqlMakerSelect OnOr(string condition)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, brIndent + "OR ", extra: condition));
+            return this;
         }
 
         public virtual ISqlMakerSelect ORDERBY(string columnName, SortAs direction)
@@ -404,12 +409,7 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect OrderByThen(string columnName, string direction)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual ISqlMakerSelect OrderByThen(string columnName, SortAs direction)
+        public virtual ISqlMakerSelect OrderThen(string columnName, SortAs direction)
         {
             throw new System.NotImplementedException();
         }
@@ -419,7 +419,7 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect GroupByThen(string columnName)
+        public virtual ISqlMakerSelect GroupThen(string columnName)
         {
             throw new System.NotImplementedException();
         }
@@ -429,30 +429,30 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect HAVING(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public virtual ISqlMakerSelect HAVING(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         public virtual ISqlMakerSelect HavingAnd(string havingConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect HavingAnd(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public virtual ISqlMakerSelect HavingAnd(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
 
         public virtual ISqlMakerSelect HavingOr(string havingConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect HavingOr(string fieldName, Condition condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public virtual ISqlMakerSelect HavingOr(string fieldName, Condition condition, string parameterAliace = null)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
         #endregion SELECT
 
         #region INSERT
