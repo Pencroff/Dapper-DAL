@@ -24,11 +24,10 @@ namespace Dapper_DAL.SqlMaker.Interfaces
         ISqlMakerSelect FROM(string tables = null);
         ISqlMakerSelect Tab(string tableName, string tableAliace = null, string tableScheme = null);
         ISqlMakerSelect WHERE(string whereConditions);
-        ISqlMakerSelect WHERE(string fieldName, string condition, string parameterAliace = null);
         ISqlMakerSelect WHERE(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerSelect WhereAnd(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerSelect WhereAnd(string whereConditions);
         ISqlMakerSelect WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerSelect WhereOr(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerSelect WhereOr(string whereConditions);
         ISqlMakerSelect WhereOr(string fieldName, Condition condition, string parameterAliace = null);
         ISqlMakerSelect JOIN(string tableName, string tableAliace = null);
         ISqlMakerSelect InnerJoin(string tableName, string tableAliace = null);
@@ -43,11 +42,11 @@ namespace Dapper_DAL.SqlMaker.Interfaces
         ISqlMakerSelect OrderByThen(string columnName, SortAs direction);
         ISqlMakerSelect GROUPBY(string columnName);
         ISqlMakerSelect GroupByThen(string columnName);
-        ISqlMakerSelect HAVING(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerSelect HAVING(string havingConditions);
         ISqlMakerSelect HAVING(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerSelect HavingAnd(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerSelect HavingAnd(string havingConditions);
         ISqlMakerSelect HavingAnd(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerSelect HavingOr(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerSelect HavingOr(string havingConditions);
         ISqlMakerSelect HavingOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
@@ -119,11 +118,10 @@ namespace Dapper_DAL.SqlMaker.Interfaces
         ISqlMakerUpdate SET(string columnsValues = null);
         ISqlMakerUpdate Val(string columnName, string parameterAliace);
         ISqlMakerUpdate WHERE(string whereConditions);
-        ISqlMakerUpdate WHERE(string fieldName, string condition, string parameterAliace = null);
         ISqlMakerUpdate WHERE(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerUpdate WhereAnd(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerUpdate WhereAnd(string whereConditions);
         ISqlMakerUpdate WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerUpdate WhereOr(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerUpdate WhereOr(string whereConditions);
         ISqlMakerUpdate WhereOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 
@@ -153,11 +151,10 @@ namespace Dapper_DAL.SqlMaker.Interfaces
     public interface ISqlMakerDelete : ISqlMakerBase
     {
         ISqlMakerDelete WHERE(string whereConditions);
-        ISqlMakerDelete WHERE(string fieldName, string condition, string parameterAliace = null);
         ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerDelete WhereAnd(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerDelete WhereAnd(string whereConditions);
         ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null);
-        ISqlMakerDelete WhereOr(string fieldName, string condition, string parameterAliace = null);
+        ISqlMakerDelete WhereOr(string whereConditions);
         ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null);
     }
 

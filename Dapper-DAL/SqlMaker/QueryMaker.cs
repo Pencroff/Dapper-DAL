@@ -334,33 +334,27 @@ namespace Dapper_DAL.SqlMaker
             return this;
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, string condition, string parameterAliace)
-        {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhere, "\nWHERE", name: fieldName, condition: condition, aliace: parameterAliace));
-            return this;
-        }
-
-        ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, Condition condition, string parameterAliace)
+        ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WhereAnd(string fieldName, string condition, string parameterAliace)
+        ISqlMakerSelect ISqlMakerSelect.WhereAnd(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WhereAnd(string fieldName, Condition condition, string parameterAliace)
+        ISqlMakerSelect ISqlMakerSelect.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WhereOr(string fieldName, string condition, string parameterAliace)
+        ISqlMakerSelect ISqlMakerSelect.WhereOr(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerSelect ISqlMakerSelect.WhereOr(string fieldName, Condition condition, string parameterAliace)
+        ISqlMakerSelect ISqlMakerSelect.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
@@ -430,7 +424,7 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect HAVING(string fieldName, string condition, string parameterAliace = null)
+        public virtual ISqlMakerSelect HAVING(string havingConditions)
         {
             throw new System.NotImplementedException();
         }
@@ -440,7 +434,7 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect HavingAnd(string fieldName, string condition, string parameterAliace = null)
+        public virtual ISqlMakerSelect HavingAnd(string havingConditions)
         {
             throw new System.NotImplementedException();
         }
@@ -450,7 +444,7 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerSelect HavingOr(string fieldName, string condition, string parameterAliace = null)
+        public virtual ISqlMakerSelect HavingOr(string havingConditions)
         {
             throw new System.NotImplementedException();
         }
@@ -507,32 +501,27 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, string condition, string parameterAliace)
+        ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, Condition condition, string parameterAliace)
+        ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, string condition, string parameterAliace)
+        ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, Condition condition, string parameterAliace)
+        ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, string condition, string parameterAliace)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, Condition condition, string parameterAliace)
+        ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
@@ -549,17 +538,12 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerDelete WHERE(string fieldName, string condition, string parameterAliace = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public virtual ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null)
         {
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerDelete WhereAnd(string fieldName, string condition, string parameterAliace = null)
+        public virtual ISqlMakerDelete WhereAnd(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
@@ -569,7 +553,7 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        public virtual ISqlMakerDelete WhereOr(string fieldName, string condition, string parameterAliace = null)
+        public virtual ISqlMakerDelete WhereOr(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
