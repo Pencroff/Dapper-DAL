@@ -16,6 +16,7 @@ namespace Dapper_DAL.SqlMaker
             ActionUpdate,
             ActionUpdateSet,
             ActionUpdateValues,
+            ActionUpdateWhere,
             ActionSelect,
             ActionSelectWhereOnHaving,
             ActionSelectJoin,
@@ -213,7 +214,50 @@ namespace Dapper_DAL.SqlMaker
         private static string ResolveUpdate(List<Clause> list, string dbScheme)
         {
             var sb = new StringBuilder();
-
+            var sqlScheme = FormatScheme(dbScheme);
+            var isSetParam = false;
+            foreach (var clause in list)
+            {
+                switch (clause.ClauseType)
+                {
+                    case ClauseType.ActionUpdate:
+                        sb.Append(clause.SqlPart);
+                        sb.Append(" ");
+                        sb.Append(FormatTableNameWithShema(sqlScheme, clause.Name));
+                        break;
+                    case ClauseType.ActionUpdateSet:
+                        sb.Append(br);
+                        sb.Append(clause.SqlPart);
+                        if (!string.IsNullOrEmpty(clause.Extra))
+                        {
+                            isSetParam = true;
+                            sb.Append(ResolveStringToRows(clause.Extra, brIndent));
+                        }
+                        break;
+                    case ClauseType.ActionUpdateValues:
+                        if (!isSetParam)
+                        {
+                            isSetParam = true;
+                            sb.Append(brIndent + clause.Name.Trim());
+                            sb.Append(" = ");
+                            sb.Append(FormatParameter(clause.Aliace));
+                        }
+                        else
+                        {
+                            sb.Append(brIndent + ", " + clause.Name.Trim());
+                            sb.Append(" = ");
+                            sb.Append(FormatParameter(clause.Aliace));
+                        }
+                        break;
+                    case ClauseType.ActionUpdateWhere:
+                        sb.Append(clause.SqlPart);
+                        sb.Append(clause.Condition.Trim());
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            sb.Append(";");
             return sb.ToString();
         }
 
@@ -512,32 +556,38 @@ namespace Dapper_DAL.SqlMaker
         #region UPDATE
         public virtual ISqlMakerUpdate UPDATE(string tableName)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionUpdate, "UPDATE", name: tableName));
+            return this;
         }
 
         public virtual ISqlMakerUpdate SET(string columnsValues = null)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionUpdateSet, "SET", extra: columnsValues));
+            return this;
         }
 
         public virtual ISqlMakerUpdate Val(string columnName, string parameterAliace)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionUpdateValues, name: columnName, aliace: parameterAliace));
+            return this;
         }
 
         ISqlMakerUpdate ISqlMakerUpdate.WHERE(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionUpdateWhere, br + "WHERE ", condition: whereConditions));
+            return this;
         }
 
         ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionUpdateWhere, brIndent + "AND ", condition: whereConditions));
+            return this;
         }
 
         ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionUpdateWhere, brIndent + "OR ", condition: whereConditions));
+            return this;
         }
         #endregion UPDATE
 

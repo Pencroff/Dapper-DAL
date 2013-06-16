@@ -52,6 +52,7 @@
     <Compile Include="SqlMakerTest\InitSqlMakerTest.cs" />
     <Compile Include="SqlMakerTest\InsertSqlMakerTest.cs" />
     <Compile Include="SqlMakerTest\SelectSqlMakerTest.cs" />
+    <Compile Include="SqlMakerTest\UpdateSqlMakerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
