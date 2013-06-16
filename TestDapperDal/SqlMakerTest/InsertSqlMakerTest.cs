@@ -23,7 +23,7 @@ namespace TestDapperDal.SqlMakerTest
         {
             var maker = QueryMaker.New(_dbScheme).INSERT("Customer");
             var sql = maker.RawSql();
-            var example = "INSERT INTO\n\t[dbo].[Customer]";
+            var example = "INSERT INTO [dbo].[Customer]";
             Assert.That(sql, Is.EqualTo(example).IgnoreCase);
         }
 
@@ -36,7 +36,7 @@ namespace TestDapperDal.SqlMakerTest
                     .Col("Description")
                     .Col("Address");
             var sql = maker.RawSql();
-            var example = "INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)";
+            var example = "INSERT INTO [dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)";
             Assert.That(sql, Is.EqualTo(example).IgnoreCase);
         }
 
@@ -50,7 +50,7 @@ namespace TestDapperDal.SqlMakerTest
                     .Col("Address")
                 .VALUES("@name, @description, @address");
             var sql = maker.RawSql();
-            var example = "INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t);";
+            var example = "INSERT INTO [dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t);";
             Assert.That(sql, Is.EqualTo(example).IgnoreCase);
         }
 
@@ -66,7 +66,7 @@ namespace TestDapperDal.SqlMakerTest
                 .VALUES("@name, @description, @address")
                     .Param("zip");
             var sql = maker.RawSql();
-            var example = "INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t\t, [Zip]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t\t, @zip\n\t);";
+            var example = "INSERT INTO [dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t\t, [Zip]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t\t, @zip\n\t);";
             Assert.That(sql, Is.EqualTo(example).IgnoreCase);
         }
 
@@ -85,7 +85,7 @@ namespace TestDapperDal.SqlMakerTest
                     .Param("@address")
                     .Param("zip");
             var sql = maker.RawSql();
-            var example = "INSERT INTO\n\t[dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t\t, [Zip]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t\t, @zip\n\t);";
+            var example = "INSERT INTO [dbo].[Customer] (\n\t\t[Name]\n\t\t, [Description]\n\t\t, [Address]\n\t\t, [Zip]\n\t)\n\tVALUES (\n\t\t@name\n\t\t, @description\n\t\t, @address\n\t\t, @zip\n\t);";
             Assert.That(sql, Is.EqualTo(example).IgnoreCase);
         }
     }

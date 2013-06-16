@@ -72,7 +72,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlMaker\Interfaces\ISqlMaker.cs" />
-    <Compile Include="SqlMaker\SqlBuilder.cs" />
     <Compile Include="SqlMaker\QueryMaker.cs" />
   </ItemGroup>
   <ItemGroup>

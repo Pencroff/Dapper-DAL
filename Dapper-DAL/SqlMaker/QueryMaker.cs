@@ -14,17 +14,19 @@ namespace Dapper_DAL.SqlMaker
             ActionInsert,
             ActionInsertValues,
             ActionUpdate,
+            ActionUpdateSet,
+            ActionUpdateValues,
             ActionSelect,
-            ActionSelectWhereOn,
+            ActionSelectWhereOnHaving,
             ActionSelectJoin,
             ActionSelectOrder,
             ActionSelectGroup,
             ActionDelete,
+            ActionDeleteWhere,
             Table,
             Column,
             Value, //Col = <valParam>
             Parameter, //<param>
-            ActionSelectHaving
         }
 
         private static string br = "\n";
@@ -32,6 +34,9 @@ namespace Dapper_DAL.SqlMaker
         private static string brIndentX2 = "\n\t\t";
 
         private static string _dbScheme;
+
+        public static string DbScheme { get { return _dbScheme; } set { _dbScheme = value; } }
+
         private static List<Clause> _clauses;
         private static List<Clause> Clauses
         {
@@ -72,7 +77,10 @@ namespace Dapper_DAL.SqlMaker
         }
         public static ISqlFirst New (string dbScheme = null)
         {
-            _dbScheme = dbScheme;
+            if (!string.IsNullOrEmpty(dbScheme))
+            {
+                _dbScheme = dbScheme;   
+            }
             Clauses.Clear();
             _sqlMaker = new QueryMaker();
             return _sqlMaker;
@@ -145,7 +153,7 @@ namespace Dapper_DAL.SqlMaker
                 {
                     case ClauseType.ActionInsert:
                         sb.Append(clause.SqlPart);
-                        sb.Append(brIndent);
+                        sb.Append(" ");
                         sb.Append(FormatTableNameWithShema(sqlScheme, clause.Name));
                         break;
                     case ClauseType.Column:
@@ -202,6 +210,13 @@ namespace Dapper_DAL.SqlMaker
             return sb.ToString();
         }
 
+        private static string ResolveUpdate(List<Clause> list, string dbScheme)
+        {
+            var sb = new StringBuilder();
+
+            return sb.ToString();
+        }
+
         private static string ResolveSelect(List<Clause> list, string dbScheme)
         {
             var sb = new StringBuilder();
@@ -219,9 +234,9 @@ namespace Dapper_DAL.SqlMaker
                             sb.Append(ResolveStringToRows(clause.Extra, brIndent));
                         }
                         break;
-                    case ClauseType.ActionSelectWhereOn:
+                    case ClauseType.ActionSelectWhereOnHaving:
                         sb.Append(clause.SqlPart);
-                        sb.Append(clause.Extra.Trim());
+                        sb.Append(clause.Condition.Trim());
                         break;
                     case ClauseType.ActionSelectJoin:
                         var schemeJoin = FormatScheme(dbScheme, clause.Extra);
@@ -273,9 +288,34 @@ namespace Dapper_DAL.SqlMaker
             sb.Append(";");
             return sb.ToString();
         }
+
+        private static string ResolveDelete(List<Clause> list, string dbScheme)
+        {
+            var sb = new StringBuilder();
+            var sqlScheme = FormatScheme(dbScheme);
+            foreach (var clause in list)
+            {
+                switch (clause.ClauseType)
+                {
+                    case ClauseType.ActionDelete:
+                        sb.Append(clause.SqlPart);
+                        sb.Append(" ");
+                        sb.Append(FormatTableNameWithShema(sqlScheme, clause.Name));
+                        break;
+                    case ClauseType.ActionDeleteWhere:
+                        sb.Append(clause.SqlPart);
+                        sb.Append(clause.Condition.Trim());
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            sb.Append(";");
+            return sb.ToString();
+        }
         #endregion Resolve Sql Query
 
-        public string RawSql()
+        public virtual string RawSql()
         {
             string sqlResult = null;
             if (Clauses.Count == 0)
@@ -289,11 +329,13 @@ namespace Dapper_DAL.SqlMaker
                     sqlResult = ResolveInsert(Clauses, _dbScheme);
                     break;
                 case ClauseType.ActionUpdate:
+                    sqlResult = ResolveUpdate(Clauses, _dbScheme);
                     break;
                 case ClauseType.ActionSelect:
                     sqlResult = ResolveSelect(Clauses, _dbScheme);
                     break;
                 case ClauseType.ActionDelete:
+                    sqlResult = ResolveDelete(Clauses, _dbScheme);
                     break;
                 default:
                     throw new Exception("Wrong start of query");
@@ -341,36 +383,21 @@ namespace Dapper_DAL.SqlMaker
 
         ISqlMakerSelect ISqlMakerSelect.WHERE(string whereConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, br + "WHERE" + brIndent, extra: whereConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, br + "WHERE" + brIndent, condition: whereConditions));
             return this;
         }
-
-        //ISqlMakerSelect ISqlMakerSelect.WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         ISqlMakerSelect ISqlMakerSelect.WhereAnd(string whereConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "AND ", extra: whereConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "AND ", condition: whereConditions));
             return this;
         }
-
-        //ISqlMakerSelect ISqlMakerSelect.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         ISqlMakerSelect ISqlMakerSelect.WhereOr(string whereConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "OR ", extra: whereConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "OR ", condition: whereConditions));
             return this;
         }
-
-        //ISqlMakerSelect ISqlMakerSelect.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         public virtual ISqlMakerSelect JOIN(string tableName, string tableAliace = null)
         {
@@ -398,19 +425,19 @@ namespace Dapper_DAL.SqlMaker
 
         public virtual ISqlMakerSelect ON(string condition)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "ON ", extra: condition));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "ON ", condition: condition));
             return this;
         }
 
         public virtual ISqlMakerSelect OnAnd(string condition)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "AND ", extra: condition));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "AND ", condition: condition));
             return this;
         }
 
         public virtual ISqlMakerSelect OnOr(string condition)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "OR ", extra: condition));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "OR ", condition: condition));
             return this;
         }
 
@@ -440,36 +467,21 @@ namespace Dapper_DAL.SqlMaker
 
         public virtual ISqlMakerSelect HAVING(string havingConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, br + "HAVING ", extra: havingConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, br + "HAVING ", condition: havingConditions));
             return this;
         }
-
-        //public virtual ISqlMakerSelect HAVING(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         public virtual ISqlMakerSelect HavingAnd(string havingConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "AND ", extra: havingConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "AND ", condition: havingConditions));
             return this;
         }
-
-        //public virtual ISqlMakerSelect HavingAnd(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         public virtual ISqlMakerSelect HavingOr(string havingConditions)
         {
-            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOn, brIndent + "OR ", extra: havingConditions));
+            Clauses.Add(Clause.New(ClauseType.ActionSelectWhereOnHaving, brIndent + "OR ", condition: havingConditions));
             return this;
         }
-
-        //public virtual ISqlMakerSelect HavingOr(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
         #endregion SELECT
 
         #region INSERT
@@ -518,67 +530,41 @@ namespace Dapper_DAL.SqlMaker
             throw new System.NotImplementedException();
         }
 
-        //ISqlMakerUpdate ISqlMakerUpdate.WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
-
         ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
 
-        //ISqlMakerUpdate ISqlMakerUpdate.WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
-
         ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string whereConditions)
         {
             throw new System.NotImplementedException();
         }
-
-        //ISqlMakerUpdate ISqlMakerUpdate.WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
         #endregion UPDATE
 
         #region DELETE
         public virtual ISqlMakerDelete DELETE(string tableName)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionDelete, "DELETE FROM", name: tableName));
+            return this;
         }
 
         public virtual ISqlMakerDelete WHERE(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionDeleteWhere, br + "WHERE ", condition: whereConditions));
+            return this;
         }
-
-        //public virtual ISqlMakerDelete WHERE(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         public virtual ISqlMakerDelete WhereAnd(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionDeleteWhere, brIndent + "AND ", condition: whereConditions));
+            return this;
         }
-
-        //public virtual ISqlMakerDelete WhereAnd(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         public virtual ISqlMakerDelete WhereOr(string whereConditions)
         {
-            throw new System.NotImplementedException();
+            Clauses.Add(Clause.New(ClauseType.ActionDeleteWhere, brIndent + "OR ", condition: whereConditions));
+            return this;
         }
-
-        //public virtual ISqlMakerDelete WhereOr(string fieldName, Condition condition, string parameterAliace = null)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
         #endregion DELETE
     }
 }
