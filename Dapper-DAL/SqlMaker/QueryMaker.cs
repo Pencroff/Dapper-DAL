@@ -26,7 +26,6 @@ namespace Dapper_DAL.SqlMaker
             ActionDeleteWhere,
             Table,
             Column,
-            Value, //Col = <valParam>
             Parameter, //<param>
         }
 
