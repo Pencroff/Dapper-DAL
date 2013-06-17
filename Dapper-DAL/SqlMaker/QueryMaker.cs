@@ -26,7 +26,7 @@ namespace Dapper_DAL.SqlMaker
             ActionDeleteWhere,
             Table,
             Column,
-            Parameter, //<param>
+            Parameter,
         }
 
         private static string br = "\n";
